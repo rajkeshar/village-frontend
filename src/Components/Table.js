@@ -9,7 +9,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useDispatch } from "react-redux";
-import { departmantList2,deleteDepartmant,disableDepartmant } from "../Services/Apis/Api";
+import { departmantList2,deleteDepartmant,disableDepartmant,surveyList } from "../Services/Apis/Api";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Model from "./Departmant/Model";
@@ -35,6 +35,7 @@ export default function Table() {
     mssg:"add",
     type:"success"
   })
+  const[editableData,seEditableData] = React.useState(false)
   const [singleDepartmantInformation,setSingleDepartmantInformation] = React.useState({})
   const navigate = useNavigate()
  
@@ -43,6 +44,18 @@ export default function Table() {
     dispatch(departmantList2()).then((res)=>{
       setDepartmants(res.payload.data)
     })
+    dispatch(surveyList()).then((res)=>{
+      console.log(res.payload.data)
+
+      res.payload.data.map((isAvailable)=>{
+        console.log(isAvailable,"<Action")
+        if(isAvailable.IsOnGoingSurvey == "OnGoing")
+        {
+             seEditableData(true)
+        }
+      })
+      // seEditableData(res.payload.data.flter((is)=>is.IsOnGoingSurvey == "OnGoing").length == 0)
+  })
   }
   React.useEffect(() => {
     getDepartmentList()
@@ -91,13 +104,19 @@ const editDepartmant = (singleDepartmant)=>{
       headerName: "Active",
       width: 150,
       renderCell:(row)=>{
-  return(<Switch checked={!row.row.isDisable}  onChange={(e)=>{
+  return(
+    <div>
+    {!editableData?
+    <Switch checked={!row.row.isDisable}  onChange={(e)=>{
         let disableData = {"isDisable":!e.target.checked}
         dispatch(disableDepartmant({id:row.row._id, data:disableData})).then((res)=>{
           getDepartmentList()
          })
       
-  }}/>)
+  }}/>:<Switch checked={!row.row.isDisable} disabled />}
+  
+  
+  </div>)
       },
       editable: false,
     },
@@ -106,7 +125,7 @@ const editDepartmant = (singleDepartmant)=>{
       headerName: "Action",
       width: 200,
       renderCell:(row)=>{
-          return(<Action row={row}/>)
+          return(<div>{!editableData?<Action row={row}/>:"survey is running"}</div>)
       },
     }
   ];

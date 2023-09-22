@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import DistrictModel from "./DistrictModel";
 import { useParams } from "react-router-dom";
 import SurveyModel from "./SurveyModel";
+import { Check } from "@mui/icons-material";
 
 export default function Survey() {
   const Handle = () => {
@@ -147,7 +148,7 @@ function starSurvay(row)
       headerName: "Active",
       width: 250,
       renderCell:(row)=>{
-  return(<div><Button type="outline" disabled={isTrue} onClick={()=>starSurvay(row)}>{row.row.IsOnGoingSurvey!="OnGoing"?"Start":"Stop"}</Button><Button type="outline" onClick={()=>verify(row)}>isAllVillagesAssign</Button></div>)
+  return(<div>{row.row.IsOnGoingSurvey == "completed"?<Button type="outline" disabled>{row.row.IsOnGoingSurvey!="OnGoing"?"Start":"Stop"}</Button>:<Button type="outline" disabled={isTrue} onClick={()=>starSurvay(row)}>{row.row.IsOnGoingSurvey!="OnGoing"?"Start":"Stop"}</Button>}{row.row.IsOnGoingSurvey == "completed"?<Button type="outline" onClick={()=>verify(row)} disabled>isAllVillagesAssign</Button>:<Button type="outline" onClick={()=>verify(row)}>isAllVillagesAssign</Button>}</div>)
       },
       editable: false,
     },
@@ -156,7 +157,7 @@ function starSurvay(row)
       headerName: "Action",
       width: 200,
       renderCell:(row)=>{
-          return(<Action row={row}/>)
+          return(<div>{row.row.IsOnGoingSurvey == "completed"?<Check/>:<Action row={row}/>}</div>)
       },
     }
   ];

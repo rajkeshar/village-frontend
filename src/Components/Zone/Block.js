@@ -9,7 +9,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useDispatch } from "react-redux";
-import { zoneById,deleteDepartmant } from "../../Services/Apis/Api";
+import { zoneById,deleteDepartmant,surveyList } from "../../Services/Apis/Api";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 // import Model from "./Departmant/Model";
@@ -39,6 +39,7 @@ export default function Block() {
     type:"success"
   })
   const [singleDistrict,setSingleDistrict] = React.useState({})
+  const [editableData, seEditableData] = React.useState(false)
   const navigate = useNavigate()
  
 
@@ -59,6 +60,18 @@ export default function Block() {
   }
   React.useEffect(() => {
     getDistrict()
+    dispatch(surveyList()).then((res)=>{
+      console.log(res.payload.data)
+
+      res.payload.data.map((isAvailable)=>{
+        console.log(isAvailable,"<Action")
+        if(isAvailable.IsOnGoingSurvey == "OnGoing")
+        {
+             seEditableData(true)
+        }
+      })
+      // seEditableData(res.payload.data.flter((is)=>is.IsOnGoingSurvey == "OnGoing").length == 0)
+  })
   }, [])
 const editDepartmant = (singleDepartmant)=>{
   setSingleDistrict(singleDepartmant)
@@ -77,7 +90,7 @@ const editDepartmant = (singleDepartmant)=>{
   const Action = ({row})=>{
     return(
       <div style={{display:"flex"}}>
-           <div style={{color:"darkblue",cursor:"pointer",marginLeft:"5px"}} onClick={()=>editDepartmant(row.row)}><EditIcon/></div>
+      {!editableData?  <div style={{color:"darkblue",cursor:"pointer",marginLeft:"5px"}} onClick={()=>editDepartmant(row.row)}><EditIcon/></div>:" "}
          {/*<div style={{color:"darkred",cursor:"pointer",marginLeft:"5px"}} onClick={()=>deleteSingleDepartmant(row.row)}><DeleteIcon/></div>*/}
           <div style={{color:"darkgreen",cursor:"pointer",marginLeft:"5px"}} onClick={()=>navigate(`/dashboard/villege/${zoneId}/${vill.districtName}/${row.row.blockUniqueId}`)}><VisibilityIcon/></div>
           

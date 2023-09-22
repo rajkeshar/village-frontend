@@ -362,19 +362,8 @@ const exportToExcel = () => {
 };
 
  React.useEffect(()=>{
-   dispatch(survayRank({startRange:range.startRange,endRange:range.endRange})).then((res)=>{
-     
-      let pageByData = []
-
-      for(let rangeData = pageStart; rangeData<pageNext;rangeData++)
-      {
-          pageByData.push(res.payload.data[rangeData])
-      }
-
-     setRowsData([...pageByData])
-     setFilteredArray(res.payload.data)
-     setButtons(res.payload.btn)
-   })
+  console.log(selected,"selected")
+   
    dispatch(getAllVilleges()).then((res)=>
    {
     console.log(res)
@@ -403,16 +392,38 @@ const exportToExcel = () => {
        arr.push({
         label:pushUpdetedData.IsOnGoingSurvey == "OnGoing" ?`${pushUpdetedData.surveyName}🟢`:pushUpdetedData.IsOnGoingSurvey == "pending"?`${pushUpdetedData.surveyName}🔴`:`${pushUpdetedData.surveyName}🟡`,
         value:pushUpdetedData._id,
+        status:pushUpdetedData.IsOnGoingSurvey
         
        })
     })
 
 
     setSurvay(arr)
+
+    
 })
  },[pageStart])
 
- 
+ React.useEffect(()=>{
+  if(survay.length !=0)
+  {
+    console.log(survay,"gfgf")
+  dispatch(survayRank({startRange:range.startRange,endRange:range.endRange,id:selected.length !=0?selected[0].value:survay?survay.filter((val)=>val.status == "OnGoing")[0]?survay.filter((val)=>val.status == "OnGoing")[0].value:survay.filter((val)=>val.status == "pending")[0].value:""})).then((res)=>{
+     
+    let pageByData = []
+
+    for(let rangeData = pageStart; rangeData<pageNext;rangeData++)
+    {
+        pageByData.push(res.payload.data[rangeData])
+    }
+
+   setRowsData([...pageByData])
+   setFilteredArray(res.payload.data)
+   setButtons(res.payload.btn)
+  
+ })
+}
+ },[pageStart,selected,survay])
  React.useEffect(()=>{
   dispatch(survayRankByDept({startRange:range.startRange,endRange:range.endRange})).then((res)=>{
     setRows2Data(res.payload.data)

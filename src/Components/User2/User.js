@@ -4,7 +4,7 @@ import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch } from "react-redux";
-import { userList,deleteUser } from "../../Services/Apis/Api";
+import { userList,deleteUser,surveyList } from "../../Services/Apis/Api";
 import UserVillageModel from "./UserVillageModel";
 import UserDepartmantModel from "./UserDepartmantModel";
 import EditModel from "./EditModel";
@@ -26,6 +26,7 @@ const User2 = () => {
   })
 
   const [singleUser, setSingleUser] = useState({})
+  const[editableData,seEditableData] = React.useState(false)
 
   const dispatch = useDispatch();
 
@@ -42,6 +43,19 @@ const User2 = () => {
       console.log(res.payload.data);
       setUsers(res.payload.data);
     });
+
+    dispatch(surveyList()).then((res)=>{
+      console.log(res.payload.data)
+
+      res.payload.data.map((isAvailable)=>{
+        console.log(isAvailable,"<Action")
+        if(isAvailable.IsOnGoingSurvey == "OnGoing")
+        {
+             seEditableData(true)
+        }
+      })
+      // seEditableData(res.payload.data.flter((is)=>is.IsOnGoingSurvey == "OnGoing").length == 0)
+  })
   }
 
   function deleteSingleUser(id)
@@ -133,14 +147,14 @@ const User2 = () => {
       width: 150,
       editable: false,
       renderCell: (row, index) => {
-        return <Button onClick={()=>
+        return <div>{editableData?"-----":userData.role != "admin"?<Button onClick={()=>
             
-            {
-                setSingleUser(row.row)
+          {
+              setSingleUser(row.row)
 
-                setDialogOpenForVillage(true)
-            
-        }}>Assign Village</Button>;
+              setDialogOpenForVillage(true)
+          
+      }}>Assign Village</Button>:<Button disabled>Assign Village</Button>}</div>;
       },
     },
     {
@@ -149,13 +163,13 @@ const User2 = () => {
       width: 200,
       editable: false,
       renderCell: (row) => {
-        return <Button onClick={()=>
+        return <div>{editableData?"survey is running":userData.role != "admin"?<Button onClick={()=>
             
             {
                 setDialogOpenForDepartmant(true)
                 setSingleUser(row.row)
             
-        }}>Assign Departmant</Button>;
+        }}>Assign Departmant</Button>:<Button disabled>Assign Departmant</Button>}</div>
       },
     },
     {
@@ -163,7 +177,7 @@ const User2 = () => {
       headerName: "Action",
       width: 200,
       renderCell: (row) => {
-        return <Action row={row} />;
+        return <div>{editableData?"-----":<Action row={row} />}</div>;
       },
     },
   ];

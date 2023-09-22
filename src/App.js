@@ -27,6 +27,7 @@ import Notification from "./Components/Notification/Notification";
 import User2 from "./Components/User2/User";
 import CollapsibleTable from "./Components/Survey List";
 import UserProfile from "./Components/User2/UserProfile";
+import BulkUpload from "./Components/Bulk";
 function App() {
   // const {login} = useSelector(state=>state)
   const [login, setLogin] = useState(false)
@@ -78,6 +79,8 @@ function App() {
         
 
         <Route path="/dashboard/Ui" element={<Ui />} />
+        <Route path="/dashboard/BulkUpload" element={<BulkUpload/>}/>
+
       </Route>
       </>}
      

@@ -9,7 +9,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useDispatch } from "react-redux";
-import { talukaList,deleteVillage } from "../../Services/Apis/Api";
+import { talukaList,deleteVillage,surveyList } from "../../Services/Apis/Api";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 // import Model from "./Departmant/Model";
@@ -46,6 +46,8 @@ export default function Village() {
     type:"success"
   })
   const [singleDistrict,setSingleDistrict] = React.useState({})
+  const [editableData, seEditableData] = React.useState(false)
+
   const navigate = useNavigate()
  
 
@@ -66,6 +68,18 @@ export default function Village() {
   React.useEffect(() => {
 
     getDistrict()
+    dispatch(surveyList()).then((res)=>{
+      console.log(res.payload.data)
+
+      res.payload.data.map((isAvailable)=>{
+        console.log(isAvailable,"<Action")
+        if(isAvailable.IsOnGoingSurvey == "OnGoing")
+        {
+             seEditableData(true)
+        }
+      })
+      // seEditableData(res.payload.data.flter((is)=>is.IsOnGoingSurvey == "OnGoing").length == 0)
+  })
   }, [])
 const editDepartmant = (singleDepartmant)=>{
   setOpenDialog({...openDilog,open:true,type:"edit"})
@@ -105,7 +119,7 @@ const editDepartmant = (singleDepartmant)=>{
       headerName: "Action",
       width: 200,
       renderCell:(row)=>{
-          return(<Action row={row}/>)
+          return(<div>{!editableData?<Action row={row}/>:"survey is running"}</div>)
       },
     }
   ];

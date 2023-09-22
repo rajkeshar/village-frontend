@@ -197,9 +197,9 @@ export const deleteNotificationData = createAsyncThunk('deleteNotification', asy
   }
 })
 
-export const survayRank = createAsyncThunk('survayRank', async ({startRange,endRange}) => {
+export const survayRank = createAsyncThunk('survayRank', async ({startRange,endRange,id}) => {
   try {
-    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/survey/topRankingVilaages`,{
+    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/survey/topRankingVilaages/${id}`,{
       startRange:startRange,endRange:endRange
     }, { headers:{ 'content-Type' : 'application/json' }})
    
@@ -296,6 +296,17 @@ export const getSelectedListOfVillagesAndDepartmant = createAsyncThunk('getSelec
   }
 })
 
+export const checkSurveyStatus = createAsyncThunk('checkSurveyStatus', async (id) => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/getvillagename/${id}`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
+
 export const selectedVillageOfListData = createAsyncThunk('selectedVillageOfListData', async (id) => {
   try {
     const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/selectedVillage/${id}`, { headers:{ 'content-Type' : 'application/json' }})
@@ -306,6 +317,8 @@ export const selectedVillageOfListData = createAsyncThunk('selectedVillageOfList
     return err 
   }
 })
+
+
 
 export const zoneList = createAsyncThunk('zoneList', async () => {
   try {
@@ -385,6 +398,28 @@ export const addDepartment = createAsyncThunk('addDepartment', async (data) => {
     return err 
   }
 })
+
+export const uploadDepartment = async (data) => {
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/dept/uploadexceldataforscheme`,data)
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+}
+
+export const uploadVillage = async (data) => {
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/zone/uploadexcelvillage`,data)
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+}
 
 export const addNotificationMessage = createAsyncThunk('addNotification', async (data) => {
   try {
