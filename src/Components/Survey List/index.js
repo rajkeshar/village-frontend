@@ -96,7 +96,7 @@ function Row(props) {
                       return (
                           <TableRow key={index}>
                           <TableCell></TableCell>
-                              <TableCell style={{width:"365px"}}></TableCell>
+                              <TableCell style={{width:"630px"}}></TableCell>
                              
 
                               <TableCell style={{width:"290px"}}><div style={{ display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px", fontSize:"15px"}}><ErrorIcon onClick={()=>{
@@ -110,7 +110,7 @@ function Row(props) {
                               <TableCell >
                                  {historyRow.score}
                               </TableCell>
-                              <TableCell>
+                              <TableCell >
                                  <div style={{marginLeft:"20px"}}>{historyRow.email}</div>
                               </TableCell>
                           </TableRow>
@@ -165,7 +165,7 @@ function Row2(props) {
                       return (
                           <TableRow key={index}>
                           <TableCell></TableCell>
-                              <TableCell style={{width:"365px"}}></TableCell>
+                              <TableCell style={{width:"500px"}}></TableCell>
                              
 
                               <TableCell style={{width:"290px"}}><div style={{ display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px", fontSize:"15px"}}><ErrorIcon  /> {historyRow.villageName}</div></TableCell>
@@ -742,7 +742,7 @@ const changeNumber = (value,number)=>{
     <Table aria-label="collapsible table">
       <TableHead>
       <TableRow>
-        <TableCell colSpan={2} fullWidth>Team</TableCell>
+        <TableCell colSpan={3} fullWidth>Team</TableCell>
           <TableCell />
           <TableCell /> 
           <TableCell />
@@ -752,7 +752,7 @@ const changeNumber = (value,number)=>{
         <TableRow>
         <TableCell>Rank</TableCell>
           <TableCell />
-          <TableCell>Department Name</TableCell>
+          <TableCell >Department Name</TableCell>
           <TableCell >Village Name</TableCell>
           <TableCell >Score&nbsp;(g)</TableCell>
           <TableCell >Surveyor&nbsp;(g)</TableCell>
