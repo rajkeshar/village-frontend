@@ -114,10 +114,11 @@ function BulkUpload() {
     <AppBar
     position="absolute"
     color="default"
+    zIndex="-1"
     elevation={0}
     sx={{
-      zIndex:"1",
-      position: "relative",
+      zIndex:"-2 !important",
+    
       borderBottom: (t) => `1px solid ${t.palette.divider}`,
     }}
   >
