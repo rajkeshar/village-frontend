@@ -45,7 +45,10 @@ const [cookies, setCookie] = useCookies(['token']);
         mssg:"password reset successfully",
         type:"success"
       })
-      naviagte("/")
+      setTimeout(()=>{
+        naviagte("/")
+
+      },2000)
     }).catch((err)=>{
       console.log(err)
       setOpenAlert({
