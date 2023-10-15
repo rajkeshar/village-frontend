@@ -9,7 +9,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useDispatch } from "react-redux";
-import { zoneList,deleteDepartmant,checkMatrix,departmantList,surveyList,deleteSurvey} from "../../Services/Apis/Api";
+import { zoneList,deleteDepartmant,checkMatrix,departmantList,surveyList,deleteSurvey,survayRank,publiceSurvey} from "../../Services/Apis/Api";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 // import Model from "./Departmant/Model";
@@ -20,6 +20,9 @@ import DistrictModel from "./DistrictModel";
 import { useParams } from "react-router-dom";
 import SurveyModel from "./SurveyModel";
 import { Check } from "@mui/icons-material";
+import DownloadExcel from "../downloadComponentExcel/DownloadExcel";
+import { publiceStatus } from "../../Services/Apis/Api";
+
 
 export default function Survey() {
   const Handle = () => {
@@ -43,6 +46,10 @@ export default function Survey() {
   const navigate = useNavigate()
   const [surveys, setSurveys] = React.useState([])
   const [isTrue, setIsTrue] = React.useState(true)
+  const [isPubliceTrue, setIsPubliceTrue] = React.useState("")
+  const [isPubliceTrueBoolean, setIsPubliceTrueBoolean] = React.useState(null)
+
+
   var userData = JSON.parse(localStorage.getItem("User"))
 
   const getDistrict = ()=>{
@@ -60,7 +67,15 @@ export default function Survey() {
   }
   React.useEffect(() => {
     getDistrict()
+    
   }, [])
+
+  React.useEffect(()=>{
+    publiceStatus().then((surveyIdOfPublice)=>{
+          console.log("hiii")
+      setIsPubliceTrue(surveyIdOfPublice.surveyId)
+  })
+  },[isPubliceTrueBoolean])
 const editDepartmant = (singleDepartmant)=>{
   setOpenDialog({...openDilog,open:true,type:"edit",for:"open"})
   setSingleDistrict(singleDepartmant)
@@ -157,7 +172,54 @@ function starSurvay(row)
       headerName: "Action",
       width: 200,
       renderCell:(row)=>{
-          return(<div>{row.row.IsOnGoingSurvey == "completed"?<Check/>:<Action row={row}/>}</div>)
+
+          return(<div>{row.row.IsOnGoingSurvey == "completed"?<div><Check/> 
+          {row.row._id == isPubliceTrue ?
+            <Switch checked  onChange={(e)=>{
+            console.log(row.row._id,"row.row._id",e.target.checked)
+            setIsPubliceTrueBoolean(false)
+            dispatch(survayRank({id:row.row._id,endRange:"",startRange:""})).then((res)=>{
+              console.log(res.payload.data,"row.row._id")
+              dispatch(publiceSurvey({
+                surveyId:row.row._id,
+                villages:res.payload.data,
+                publice:false
+              })).then((resData)=>{
+
+                setOpenAlert({
+                  open: true,
+                  mssg:"survey unpublish successfully",
+                  type: "success" 
+              })
+
+             setTimeout(()=>{
+               window.location.reload()
+             },1000)
+              })
+            })
+          }}/>:<Switch   onChange={(e)=>{
+            console.log(row.row._id,"row.row._id",e.target.checked)
+            setIsPubliceTrueBoolean(true)
+            dispatch(survayRank({id:row.row._id,endRange:"",startRange:""})).then((res)=>{
+              console.log(res.payload.data,"row.row._id")
+              dispatch(publiceSurvey({
+                surveyId:row.row._id,
+                villages:res.payload.data,
+                publice:true
+              })).then((resData)=>{
+
+                setOpenAlert({
+                  open: true,
+                  mssg:"survey publish successfully",
+                  type: "success" 
+              })
+
+              setTimeout(()=>{
+                window.location.reload()
+              },1000)
+              })
+            })
+          }}/>}</div>:<Action row={row}/>}</div>)
       },
     }
   ];
@@ -183,7 +245,7 @@ function starSurvay(row)
   </AppBar>
     <div style={{display:"flex", height:"500px",marginTop:"20px",background:"white",justifyContent:"center",width:"100%",flexDirection:"column",alignItems:"center"}}>
       
-    <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add",for:"open"})}>Add Survey</Button></div></div>
+    <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add",for:"open"})}>Add Survey</Button> <DownloadExcel/></div></div>
     <div style={{minWidth:"300px",maxWidth:"100%",width:"80%",background:"white"}}>
           
           <div style={{ height: 400, width: "100%", background: "white" }}>

@@ -211,6 +211,17 @@ export const survayRank = createAsyncThunk('survayRank', async ({startRange,endR
   }
 })
 
+export const publiceSurvey = createAsyncThunk('publiceSurvey', async (data) => {
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/survey/publiceSurveyData`,data, { headers:{ 'content-Type' : 'application/json' }})
+   
+
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
 export const questionListFilter = createAsyncThunk('questionListFilter', async (data) => {
   try {
     const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/survey/questionList`,data, { headers:{ 'content-Type' : 'application/json' }})
@@ -421,6 +432,17 @@ export const uploadVillage = async (data) => {
   }
 }
 
+export const publiceStatus = async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/survey/getPubliceSurveyData`)
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+}
+
 export const addNotificationMessage = createAsyncThunk('addNotification', async (data) => {
   try {
     const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/noti/createnotification`,data, { headers:{ 'content-Type' : 'application/json' }})
@@ -621,6 +643,17 @@ export const schemeList = createAsyncThunk('schemeList', async (id) => {
   }
 })
 
+
+export const listOfAssignUserDeptVillage = createAsyncThunk('listOfAssignUserDeptVillage', async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/listOfAssignUserDeptVillage`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
 
 export const zoneById = createAsyncThunk('zoneById', async (id) => {
   try {

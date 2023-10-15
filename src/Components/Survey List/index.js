@@ -16,7 +16,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import ErrorIcon from '@mui/icons-material/Error';
-import { Button, FormControl, Input, InputLabel, MenuItem, Pagination, TextField } from '@mui/material';
+import { Button, FormControl,Select, Input, InputLabel, MenuItem, Pagination, TextField } from '@mui/material';
 import { survayRank ,getAllVilleges, survayRankByDept,questionListFilter, departmantList,surveyList} from '../../Services/Apis/Api';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ import Tab from "@mui/material/Tab";
 import { MultiSelect } from "react-multi-select-component";
 import { useEffect } from 'react';
 import {CChart} from "@coreui/react-chartjs"
-import Select from "react-select";
+// import Select from "react-select";
 import { DataGrid } from '@mui/x-data-grid';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver'
@@ -58,7 +58,7 @@ function createData(rank,name, calories, fat, carbs, protein, price) {
 
 
 function Row(props) {
-  const { row,setQuestionFilter,setTabs } = props;
+  const { row,setQuestionFilter,questionFilter,setTabs } = props;
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -100,6 +100,9 @@ function Row(props) {
                              
 
                               <TableCell style={{width:"290px"}}><div style={{ display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px", fontSize:"15px"}}><ErrorIcon onClick={()=>{
+                                questionFilter.villageName = row.villageUniqueId
+                                questionFilter.surveyId = row.surveyId
+                                questionFilter.deptId = row.deptId
                                 setQuestionFilter({
                                   villageUniqueId:row.villageUniqueId,
                                   surveyId:row.surveyId,
@@ -115,7 +118,7 @@ function Row(props) {
                               </TableCell>
                           </TableRow>
                       );
-                  })}
+                  })}*
                 </TableBody>
               </Table>
             </Box>
@@ -252,7 +255,7 @@ export default function CollapsibleTable() {
   const [listOfQuestion, setListOfQuestion] = useState([])
   const [pageStart, setPageStart] = useState(0)
   const [pageNext, setPageNext] = useState(5)
-
+ 
 
 
 
@@ -712,7 +715,7 @@ const changeNumber = (value,number)=>{
         </TableHead>
         <TableBody>
           {rowsData?rowsData.map((row,index) => (<>
-            {row != null ?<Row key={index} row={row} index={index} setQuestionFilter={setQuestionFilter} setTabs={setTabs}/>:<div style={{padding:"10px",textAlign:"center"}}> </div>}
+            {row != null ?<Row key={index} row={row} questionFilter={questionFilter} index={index} setQuestionFilter={setQuestionFilter} setTabs={setTabs}/>:<div style={{padding:"10px",textAlign:"center"}}> </div>}
             </>
           )):""}
         </TableBody>
@@ -772,21 +775,62 @@ const changeNumber = (value,number)=>{
     </div>
 :""}
 {tabs == 2?<div> 
-   <div style={{display:"flex",alignItems:" center"}}>
+   <div style={{display:"flex",alignItems:" center",marginTop:"10px"}}>
 <div style={{width:"300px"}}>
 {console.log(selected)}
-<Select filterOption={filterOption} options={survay} onChange={(e)=>setQuestionFilter({...questionFilter,surveyId:e.value})} />
-
+<FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">Survey</InputLabel>
+  <Select
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={questionFilter.surveyId}
+    label="Village"
+    onChange={(e)=>setQuestionFilter({...questionFilter,surveyId:e.target.value})}
+  >
+  {survay.map((data)=>{
+    return(
+    <MenuItem value={data.value}>{data.label}</MenuItem>)
+  })}
+   
+  </Select>
+</FormControl>
   
    </div>
    <div style={{width:"300px"}}>
-<Select filterOption={filterOption} options={villages} onChange={(e)=>setQuestionFilter({...questionFilter,villageUniqueId:e.value})} />
-
+<FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">Village</InputLabel>
+  <Select
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={questionFilter.villageUniqueId}
+    label="Village"
+    onChange={(e)=>setQuestionFilter({...questionFilter,villageUniqueId:e.target.value})}
+  >
+  {villages.map((data)=>{
+    return(<MenuItem value={data.value}>{data.label}</MenuItem>)
+  })}
+   
+  </Select>
+</FormControl>
   
        </div>
        <div style={{width:"300px"}}>
-       <Select filterOption={filterOption} options={departmantListData} onChange={(e)=>setQuestionFilter({...questionFilter,deptId:e.value})} />
-
+       <FormControl fullWidth>
+       <InputLabel id="demo-simple-select-label">Department</InputLabel>
+       <Select
+         labelId="demo-simple-select-label"
+         id="demo-simple-select"
+         value={questionFilter.deptId}
+         label="Department"
+         onChange={(e)=>setQuestionFilter({...questionFilter,deptId:e.target.value})} 
+       >
+       {departmantListData.map((data)=>{
+         return(
+         <MenuItem value={data.value}>{data.label}</MenuItem>)
+       })}
+        
+       </Select>
+       </FormControl>
        </div>
     
        

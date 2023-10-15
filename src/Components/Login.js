@@ -29,7 +29,8 @@ const [cookies, setCookie] = useCookies(['token']);
    
     dispatch(loginUser(user)).then((res)=>{
       console.log(res.payload)
-      
+       if(res.payload.status != 400)
+       {
       if(res.payload.message == "Logged in successfully")
       {
         setToken(res.data)
@@ -47,12 +48,25 @@ const [cookies, setCookie] = useCookies(['token']);
         })
         
       }
-      
+    }
+    else
+    {
+      setOpenAlert({
+        open:true,
+        mssg:res.payload.response.data.message,
+        type:"invalid password"
+      })
+    }
       
      
 
     }).catch((err)=>{
       
+        setOpenAlert({
+          open:true,
+          mssg:"invalid password",
+          type:"warning"
+        })
     })
 
 

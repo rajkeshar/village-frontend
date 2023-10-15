@@ -304,7 +304,7 @@ export default function SurveyModel({
                   value={surveyData.surveyStartDate}
                   format="MM/dd/yyyy"
                   onChange={(newValue) => {
-                    setSurveyData({ ...surveyData, surveyStartDate: newValue });
+                    setSurveyData({ ...surveyData, surveyStartDate: new Date(newValue) });
                   }}
                   disablePast
                   
@@ -321,7 +321,7 @@ export default function SurveyModel({
                   format="MM/dd/yyyy"
                   value={surveyData.surveyEndDate}
                   onChange={(newValue) => {
-                    setSurveyData({ ...surveyData, surveyEndDate: newValue });
+                    setSurveyData({ ...surveyData, surveyEndDate: new Date(newValue) });
                   }}
                 />
               </LocalizationProvider>
