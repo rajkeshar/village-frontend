@@ -286,6 +286,38 @@ export const addAssignmentOfDepartmsnt = createAsyncThunk('assignDepartmant', as
   }
 })
 
+export const getCombination = createAsyncThunk('getCombination', async ({id}) => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/getCombination/${id}`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer2")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
+
+export const deleteCombination = createAsyncThunk('deleteCombination', async ({id}) => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/deleteCombination/${id}`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer2")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
+
+export const assignCombination = createAsyncThunk('assignCombination', async (data) => {
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/user/combinationAdd`,data, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer2")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
 export const removeAssignmentOfDepartmsnt = createAsyncThunk('removeassignDepartmant', async ({id,data}) => {
   try {
     const res = await axios.post(`${process.env.REACT_APP_Test_Url}/api/user/deselectdeptfromuser/${id}`,{"deptIds":data}, { headers:{ 'content-Type' : 'application/json' }})
@@ -442,6 +474,7 @@ export const publiceStatus = async () => {
     return err 
   }
 }
+
 
 export const addNotificationMessage = createAsyncThunk('addNotification', async (data) => {
   try {
@@ -655,6 +688,38 @@ export const listOfAssignUserDeptVillage = createAsyncThunk('listOfAssignUserDep
   }
 })
 
+export const excelDownloadAssignCombination = createAsyncThunk('excelDownloadAssignCombination', async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/excelDownloadAssignCombination`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
+
+export const excelDownloadOfNonAssignCombination = createAsyncThunk('excelDownloadOfNonAssignCombination', async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/user/excelDownloadOfNonAssignCombination`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
+
+export const surveyChart = createAsyncThunk('surveyChart', async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/survey/surveyChart`, { headers:{ 'content-Type' : 'application/json' }})
+    console.log(res.data, "reducer")
+    return res.data
+  }
+  catch (err) {
+    return err 
+  }
+})
 export const zoneById = createAsyncThunk('zoneById', async (id) => {
   try {
     const res = await axios.get(`${process.env.REACT_APP_Test_Url}/api/zone/getzonebyid/${id}`, { headers:{ 'content-Type' : 'application/json' }})

@@ -132,6 +132,7 @@ function Row(props) {
 
 function Row2(props) {
   const { row } = props;
+  console.log(row,"rowrow")
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -171,12 +172,20 @@ function Row2(props) {
                               <TableCell style={{width:"500px"}}></TableCell>
                              
 
-                              <TableCell style={{width:"290px"}}><div style={{ display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px", fontSize:"15px"}}><ErrorIcon  /> {historyRow.villageName}</div></TableCell>
+                              <TableCell style={{width:"220px"}}><div style={{ display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px", fontSize:"15px"}}><ErrorIcon onClick={()=>{
+                              
+                                props.setQuestionFilter({
+                                  villageUniqueId:historyRow.villageUniqueId,
+                                  surveyId:props.survayId,
+                                  deptId:row.id
+                                })
+                                props.setTabs(2)
+                              }} />{historyRow.villageName}</div></TableCell>
                               <TableCell >
                                  {historyRow.deptScore}
                               </TableCell>
                               <TableCell>
-                                 <div style={{marginLeft:"20px"}}>{row.email}</div>
+                                 <div style={{marginLeft:"20px"}}>{historyRow.email}</div>
                               </TableCell>
                           </TableRow>
                       );
@@ -241,6 +250,9 @@ export default function CollapsibleTable() {
   const [rowsData, setRowsData] = React.useState([])
   const [rows2Data, setRows2Data] = React.useState([])
   const [survay, setSurvay] = React.useState([])
+  const [survayId, setSurvayId] = React.useState("")
+
+
   const [villages, setVillages] = React.useState([])
   const [filteredArray , setFilteredArray] = React.useState([])
   const [departmantListData, setDepartmsntListData] = React.useState([])
@@ -390,8 +402,13 @@ const exportToExcel = () => {
    dispatch(surveyList()).then((res)=>{
     console.log(res.payload.data)
     let arr = []
-
+        
     res.payload.data.map((pushUpdetedData)=>{
+           if(pushUpdetedData.IsOnGoingSurvey == "OnGoing")
+           {
+            setSurvayId(pushUpdetedData._id)
+           }
+        
        arr.push({
         label:pushUpdetedData.IsOnGoingSurvey == "OnGoing" ?`${pushUpdetedData.surveyName}🟢`:pushUpdetedData.IsOnGoingSurvey == "pending"?`${pushUpdetedData.surveyName}🔴`:`${pushUpdetedData.surveyName}🟡`,
         value:pushUpdetedData._id,
@@ -411,7 +428,8 @@ const exportToExcel = () => {
   if(survay.length !=0)
   {
     console.log(survay,"gfgf")
-  dispatch(survayRank({startRange:range.startRange,endRange:range.endRange,id:selected.length !=0?selected[0].value:survay?survay.filter((val)=>val.status == "OnGoing")[0]?survay.filter((val)=>val.status == "OnGoing")[0].value:survay.filter((val)=>val.status == "pending")[0].value:""})).then((res)=>{
+  dispatch(survayRank({startRange:range.startRange,endRange:range.endRange,
+    id:selected.length !=0?selected[0].value:survay?survay.filter((val)=>val.status == "OnGoing")[0]?survay.filter((val)=>val.status == "OnGoing")[0].value:survay.filter((val)=>val.status == "pending")[0]?survay.filter((val)=>val.status == "pending")[0].value:survay.filter((val)=>val.status == "completed")[0].value:""})).then((res)=>{
      
     let pageByData = []
 
@@ -628,9 +646,7 @@ React.useEffect(()=>{
 const columns = [
   { field: "schemeName", headerName: "schemeName", width: 250 },
   { field: "question", headerName: "question", width: 250 },
-
   { field: "score", headerName: "score", width: 250 },
-
 ];
 
  const handleChange = (event, newValue) => {
@@ -763,12 +779,12 @@ const changeNumber = (value,number)=>{
       </TableHead>
       <TableBody>
          {rows2Data?rows2Data.length >0 ? rows2Data.map((row,index) => (<>
-          {row != null ?<Row2 key={index} row={row} index={index} />:""}
+          {row != null ?<Row2 survayId={survayId} setQuestionFilter={setQuestionFilter} setTabs={setTabs} key={index} row={row} index={index} />:"please start the servey"}
           </>
         )) : rows2Data?rows2Data.map((row,index) => (<>
-          {row != null ?<Row2 key={index} row={row} index={index} />:""}
+          {row != null ?<Row2 survayId={survayId}  setQuestionFilter={setQuestionFilter} setTabs={setTabs} key={index} row={row} index={index} />:""}
           </>
-        )):"":<div style={{textAlign:"center",width:"100%",padding:"10px"}}>no data found</div>}
+        )):"no data found":<div style={{textAlign:"center",width:"100%",padding:"10px"}}>no data found</div>}
       </TableBody>
     </Table>
     </TableContainer>

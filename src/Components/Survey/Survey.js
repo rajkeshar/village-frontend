@@ -22,6 +22,7 @@ import SurveyModel from "./SurveyModel";
 import { Check } from "@mui/icons-material";
 import DownloadExcel from "../downloadComponentExcel/DownloadExcel";
 import { publiceStatus } from "../../Services/Apis/Api";
+import DownloadUnAssignedExcel from "../downloadComponentExcel/DownloadUnAssinedExcel";
 
 
 export default function Survey() {
@@ -245,7 +246,7 @@ function starSurvay(row)
   </AppBar>
     <div style={{display:"flex", height:"500px",marginTop:"20px",background:"white",justifyContent:"center",width:"100%",flexDirection:"column",alignItems:"center"}}>
       
-    <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add",for:"open"})}>Add Survey</Button> <DownloadExcel/></div></div>
+    <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add",for:"open"})}>Add Survey</Button> <div style={{display:"flex"}}><DownloadExcel/><DownloadUnAssignedExcel/></div></div></div>
     <div style={{minWidth:"300px",maxWidth:"100%",width:"80%",background:"white"}}>
           
           <div style={{ height: 400, width: "100%", background: "white" }}>

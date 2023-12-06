@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Dialog, DialogActions, DialogContent, Toolbar, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch } from "react-redux";
@@ -9,16 +9,21 @@ import UserVillageModel from "./UserVillageModel";
 import UserDepartmantModel from "./UserDepartmantModel";
 import EditModel from "./EditModel";
 import AlertMssg from "../Alert/Alert";
+import CombinationModel from "./combinationModel/CombinationModel";
 
 const User2 = () => {
   const [users, setUsers] = useState([]);
   const [dialogOpenForVillage, setDialogOpenForVillage] = useState(false)
+  const [deleteDrawer, setDeleteDrawer] = useState(false)
+  const [deleteUserData, setDeleteUserData] = useState({})
+
   const [dialogOpenForDepartmant, setDialogOpenForDepartmant] = useState(false)
   var userData = JSON.parse(localStorage.getItem("User"))
   const [openDilog,setOpenDialog] = React.useState({
     open:false,
     type:"add",
   })
+
   const [openAlert,setOpenAlert] = React.useState({
     open:false,
     mssg:"add",
@@ -27,7 +32,7 @@ const User2 = () => {
 
   const [singleUser, setSingleUser] = useState({})
   const[editableData,seEditableData] = React.useState(false)
-
+  const [openCombinationDilog,setOpenCombinationDialog] = React.useState(false)
   const dispatch = useDispatch();
 
   //useeffect
@@ -64,8 +69,10 @@ const User2 = () => {
         console.log(res)
         setOpenAlert({open:true,mssg:"user delete successfully",type:"success"})
         apiCall()
+        setDeleteDrawer(false)
       }). catch((err)=>{
         setOpenAlert({open:true,mssg:"error",type:"error"})
+        setDeleteDrawer(false)
       })
   }
 
@@ -86,7 +93,10 @@ const User2 = () => {
         >
           <EditIcon />
         </div>}
-       {userData.role == "DistrictManager"?"":userData.role == "admin"?"": <div style={{ color: "darkred", cursor: "pointer", marginLeft: "5px" }} onClick={()=>deleteSingleUser(row.row)}>
+       {userData.role == "DistrictManager"?"":userData.role == "admin"?"": <div style={{ color: "darkred", cursor: "pointer", marginLeft: "5px" }} onClick={()=>{
+        setDeleteDrawer(true)
+        setDeleteUserData(row.row)
+       }}>
           <DeleteIcon />
         </div>}
         {/* <div style={{color:"green",cursor:"pointer",marginLeft:"5px"}} onClick={()=>navigate(`/dashboard/department/${row.row._id}/${row.row.deptName}`)}><VisibilityIcon/></div>*/}
@@ -141,35 +151,49 @@ const User2 = () => {
       width: 150,
       editable: false,
     },
+    // {
+    //   field: "village",
+    //   headerName: "Villege",
+    //   width: 150,
+    //   editable: false,
+    //   renderCell: (row, index) => {
+    //     return <div>{editableData?"-----":userData.role != "admin"?<Button onClick={()=>
+            
+    //       {
+    //           setSingleUser(row.row)
+
+    //           setDialogOpenForVillage(true)
+          
+    //   }}>Assign Village</Button>:<Button disabled>Assign Village</Button>}</div>;
+    //   },
+    // },
+    // {
+    //   field: "departmant",
+    //   headerName: "Departmant",
+    //   width: 200,
+    //   editable: false,
+    //   renderCell: (row) => {
+    //     return <div>{editableData?"survey is running":userData.role != "admin"?<Button onClick={()=>
+            
+    //         {
+    //             setDialogOpenForDepartmant(true)
+    //             setSingleUser(row.row)
+            
+    //     }}>Assign Departmant</Button>:<Button disabled>Assign Departmant</Button>}</div>
+    //   },
+    // },
     {
-      field: "village",
-      headerName: "Villege",
-      width: 150,
+      field: "AssignDepartmentAndVillage",
+      headerName: "AssignDepartmentAndVillage",
+      width: 300,
       editable: false,
       renderCell: (row, index) => {
-        return <div>{editableData?"-----":userData.role != "admin"?<Button onClick={()=>
-            
+        return <div>{!editableData?<Button onClick={()=>
           {
-              setSingleUser(row.row)
-
-              setDialogOpenForVillage(true)
-          
-      }}>Assign Village</Button>:<Button disabled>Assign Village</Button>}</div>;
-      },
-    },
-    {
-      field: "departmant",
-      headerName: "Departmant",
-      width: 200,
-      editable: false,
-      renderCell: (row) => {
-        return <div>{editableData?"survey is running":userData.role != "admin"?<Button onClick={()=>
-            
-            {
-                setDialogOpenForDepartmant(true)
-                setSingleUser(row.row)
-            
-        }}>Assign Departmant</Button>:<Button disabled>Assign Departmant</Button>}</div>
+            console.log(openCombinationDilog)
+            setSingleUser(row.row)
+            setOpenCombinationDialog(true)
+        }}>AssignDepartmentAndVillage</Button>:"survey is running"}</div>;
       },
     },
     {
@@ -202,7 +226,7 @@ const User2 = () => {
       </AppBar>
 
     <div style={{display:"flex", height:"500px",marginTop:"20px",background:"white",justifyContent:"center",width:"100%",flexDirection:"column",alignItems:"center"}}>
-    {userData.role == "DistrictManager"?"":userData.role == "admin"?"": <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({open:true,type:"add"})}>Add User</Button></div></div>}
+    {!editableData?userData.role == "DistrictManager"?"":userData.role == "admin"?"": <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({open:true,type:"add"})}>Add User</Button></div></div>:""}
 
       <div
         style={{
@@ -228,8 +252,23 @@ const User2 = () => {
       <UserVillageModel dialogOpenForVillage={dialogOpenForVillage} setDialogOpenForVillage={setDialogOpenForVillage} singleUser={singleUser}/>
       <UserDepartmantModel  singleUser={singleUser} setDialogOpenForDepartmant={setDialogOpenForDepartmant} dialogOpenForDepartmant={dialogOpenForDepartmant}/>
       <EditModel apiCall={apiCall} openDilog={openDilog} setOpenDialog={setOpenDialog} singleUser={singleUser}   openAlert={openAlert} setOpenAlert={setOpenAlert}/>
+     
+      <CombinationModel singleUser={singleUser}  dialogOpenForDepartmant setDialogOpenForDepartmant openAlert={openAlert} setOpenAlert={setOpenAlert} openCombinationDialog={openCombinationDilog} setOpenCombinationDialog={setOpenCombinationDialog}/>
+      
       <AlertMssg  action={openAlert} setAction={setOpenAlert}/>
 
+      <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+      <DialogContent>
+          Are you sure you want to delete it
+      
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={()=>{
+          deleteSingleUser(deleteUserData)
+        }}>Delete</Button>
+      </DialogActions>
+      
+   </Dialog>
     </div>
   );
 };

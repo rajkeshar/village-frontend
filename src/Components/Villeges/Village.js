@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Switch,Chip } from "@mui/material";
+import { Button, Switch,Chip, Dialog, DialogActions, DialogContent } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -34,7 +34,8 @@ export default function Village() {
 
   var userData = JSON.parse(localStorage.getItem("User"))
 
-  
+  const [deleteDrawer, setDeleteDrawer] = React.useState(false)
+  const [deleteVillData, setDeleteVillData] = React.useState({})
   const [openDilog,setOpenDialog] = React.useState({
     open:false,
     type:"add",
@@ -92,15 +93,22 @@ const editDepartmant = (singleDepartmant)=>{
     console.log(res)
     setOpenAlert({open:true,mssg:"departmant delesetSingleDistrictte successfully",type:"success"})
     getDistrict()
+    setDeleteDrawer(false)
   }). catch((err)=>{
     setOpenAlert({open:true,mssg:"error",type:"error"})
+    setDeleteDrawer(false)
+
   })
 }
   const Action = ({row})=>{
     return(
       <div style={{display:"flex"}}>
            <div  style={{color:"darkblue",cursor:"pointer",marginLeft:"5px"}} onClick={()=>editDepartmant(row.row)}><EditIcon/></div>
-           {userData.role == "DistrictManager"? "":<div style={{color:"darkred",cursor:"pointer",marginLeft:"5px"}} onClick={()=>deleteSingleDepartmant(row.row)}><DeleteIcon/></div>}
+           {userData.role == "DistrictManager"? "":<div style={{color:"darkred",cursor:"pointer",marginLeft:"5px"}} onClick={()=>
+            {
+              setDeleteVillData(row.row)
+               setDeleteDrawer(true)            
+           }}><DeleteIcon/></div>}
          
           {/* <div style={{color:"green",cursor:"pointer",marginLeft:"5px"}} onClick={()=>navigate(`/dashboard/department/${row.row._id}/${row.row.deptName}`)}><VisibilityIcon/></div>*/}
           
@@ -168,6 +176,23 @@ const editDepartmant = (singleDepartmant)=>{
         {/*<Model action={openDilog} getDistrict={getDistrict} setOpenAlert={setOpenAlert} singleDistrict={singleDistrict} dispatch={dispatch} setAction={setOpenDialog}/>*/}
         <VillageModel  blockData={blockData} action={openDilog} getDistrict={getDistrict} taluka={taluka} setOpenAlert={setOpenAlert} singleDistrict={singleDistrict} dispatch={dispatch} setAction={setOpenDialog}/>
         <AlertMssg  action={openAlert} setAction={setOpenAlert}/>
+
+        <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+        <DialogContent>
+            Are you sure you want to delete it
+        
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{
+            deleteSingleDepartmant(deleteVillData)
+
+  
+  
+          }}>Delete</Button>
+        </DialogActions>
+        
+     </Dialog>
+    
     </div>
   );
 }
