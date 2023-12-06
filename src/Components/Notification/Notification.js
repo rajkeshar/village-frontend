@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import AppBar from "@mui/material/AppBar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, Toolbar, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, Toolbar, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import NotificationModel from "./NotificationModel";
 import AlertMssg from "../Alert/Alert";
@@ -21,6 +21,9 @@ const Notification = () => {
     mssg:"add",
     type:"success"
   })
+
+  const [deleteDrawer, setDeleteDrawer] = useState(false)
+  const [deleteNoti, setDeleteNoti] = useState({})
 
   const [singleNotification, setSingleNotification] = useState({})
   const [notification, setNotification] = useState([]);
@@ -71,26 +74,8 @@ const Notification = () => {
  
   const Action = ({ row }) => {
     const deleteNotificationMethod = async (notification)=>{
-        try{
-            let success = await dispatch(deleteNotificationData(notification._id))
-            if(success)
-            {
-                setOpenAlert({
-                    open:true,
-                    type:"success",
-                    mssg:"succesfully delete notification"
-                })
-                apicall();
-            }
-        }
-        catch(err)
-        {
-            setOpenAlert({
-                open:true,
-                type:"error",
-                mssg:"something wrong"
-            })
-        }
+      setDeleteDrawer(true)
+        setDeleteNoti(notification)
      
         } 
     return (
@@ -184,7 +169,41 @@ const Notification = () => {
       </div>
       <NotificationModel action={openDilog} singleNotification={singleNotification} setAction={setOpenDialog} apicall={apicall} setOpenAlert={setOpenAlert}/>
       <AlertMssg  action={openAlert} setAction={setOpenAlert}/>
+      <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+      <DialogContent>
+          Are you sure you want to delete it
       
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={async()=>{
+          try{
+            let success = await dispatch(deleteNotificationData(deleteNoti._id))
+            if(success)
+            {
+                setOpenAlert({
+                    open:true,
+                    type:"success",
+                    mssg:"succesfully delete notification"
+                })
+                apicall();
+                setDeleteDrawer(false)
+            }
+        }
+        catch(err)
+        {
+            setOpenAlert({
+                open:true,
+                type:"error",
+                mssg:"something wrong"
+            })
+            setDeleteDrawer(false)
+
+        }
+        }}>Delete</Button>
+      </DialogActions>
+      
+      
+   </Dialog>
 
     </div>
   );

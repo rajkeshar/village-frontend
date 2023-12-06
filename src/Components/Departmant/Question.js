@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Switch, Chip } from "@mui/material";
+import { Button, Switch, Chip, Dialog, DialogActions, DialogContent } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -41,6 +41,8 @@ export default function Question() {
 
   const { departmentId, schemeId } = useParams();
   var userData = JSON.parse(localStorage.getItem("User"))
+  const [deleteDrawer, setDeleteDrawer] = React.useState(false)
+  const [deleteQueData, setDeleteQueData] = React.useState({})
 
   const getDepartmentList = () => {
     dispatch(schemeList(departmentId)).then((res) => {
@@ -71,9 +73,11 @@ export default function Question() {
           type: "success",
         });
         getDepartmentList();
+        setDeleteDrawer(false)
       })
       .catch((err) => {
         setOpenAlert({ open: true, mssg: "error", type: "error" });
+        setDeleteDrawer(false)
       });
   }
   const Action = ({ row }) => {
@@ -87,7 +91,11 @@ export default function Question() {
         </div>
         {userData.role == "DistrictManager"?"": <div
           style={{ color: "darkred", cursor: "pointer", marginLeft: "5px" }}
-          onClick={() => deleteSingleDepartmant(row.row)}
+          onClick={() => {
+            setDeleteQueData(row.row)
+            setDeleteDrawer(true)
+          
+          }}
         >
           <DeleteIcon />
         </div>}
@@ -214,6 +222,20 @@ export default function Question() {
       />
 
       <AlertMssg action={openAlert} setAction={setOpenAlert} />
+      <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+      <DialogContent>
+          Are you sure you want to delete it
+      
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={()=>{
+          deleteSingleDepartmant(deleteQueData)
+
+
+        }}>Delete</Button>
+      </DialogActions>
+      
+   </Dialog>
     </div>
   );
 }

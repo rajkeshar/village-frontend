@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Switch,Chip } from "@mui/material";
+import { Button, Switch,Chip, Dialog, DialogContent, DialogActions } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -29,7 +29,8 @@ export default function Table() {
     type:"add"
   })
   var userData = JSON.parse(localStorage.getItem("User"))
-  
+  const [deleteDrawer, setDeleteDrawer] = React.useState(false)
+  const [deleteDeptData, setDeleteDeptData] = React.useState({})
   const [openAlert,setOpenAlert] = React.useState({
     open:false,
     mssg:"add",
@@ -69,15 +70,21 @@ const editDepartmant = (singleDepartmant)=>{
     console.log(res)
     setOpenAlert({open:true,mssg:"departmant delete successfully",type:"success"})
     getDepartmentList()
+    setDeleteDrawer(false)
   }). catch((err)=>{
     setOpenAlert({open:true,mssg:"error",type:"error"})
+    setDeleteDrawer(false)
   })
 }
   const Action = ({row})=>{
     return(
       <div style={{display:"flex"}}>
            <div style={{color:"darkblue",cursor:"pointer",marginLeft:"5px"}} onClick={()=>editDepartmant(row.row)}><EditIcon/></div>
-           {userData.role == "DistrictManager"?"":<div style={{color:"darkred",cursor:"pointer",marginLeft:"5px"}} onClick={()=>deleteSingleDepartmant(row.row)}><DeleteIcon/></div>}
+           {userData.role == "DistrictManager"?"":<div style={{color:"darkred",cursor:"pointer",marginLeft:"5px"}} onClick={()=>{
+            setDeleteDrawer(true)
+            setDeleteDeptData(row.row)
+          
+           }}><DeleteIcon/></div>}
           <div style={{color:"darkgreen",cursor:"pointer",marginLeft:"5px"}} onClick={()=>navigate(`/dashboard/department/${row.row._id}/${row.row.deptName}`)}><VisibilityIcon/></div>
           
       </div>
@@ -151,7 +158,7 @@ const editDepartmant = (singleDepartmant)=>{
   </AppBar>
     <div style={{display:"flex", height:"500px",marginTop:"20px",background:"white",justifyContent:"center",width:"100%",flexDirection:"column",alignItems:"center"}}>
       
-    <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add"})}>Add Departmant</Button></div></div>
+   {!editableData? <div className="flex " style={{justifyContent:"left",width:"80%",marginBottom:"20px"}}><div style={{width:"90%"}}><Button  variant="contained" style={{background: "#6750A4"}} onClick={()=>setOpenDialog({...openDilog,open:true,type:"add"})}>Add Departmant</Button></div></div>:""}
     <div style={{minWidth:"300px",maxWidth:"100%",width:"80%",background:"white"}}>
           
           <div style={{ height: 400, width: "100%", background: "white" }}>
@@ -169,6 +176,20 @@ const editDepartmant = (singleDepartmant)=>{
         <Model action={openDilog} getDepartmentList={getDepartmentList} setOpenAlert={setOpenAlert} singleDepartmantInformation={singleDepartmantInformation} dispatch={dispatch} setAction={setOpenDialog}/>
     
         <AlertMssg  action={openAlert} setAction={setOpenAlert}/>
+
+        <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+        <DialogContent>
+            Are you sure you want to delete it
+        
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{
+            deleteSingleDepartmant(deleteDeptData)
+
+          }}>Delete</Button>
+        </DialogActions>
+        
+     </Dialog>
     </div>
   );
 }

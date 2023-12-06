@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Switch, Chip } from "@mui/material";
+import { Button, Switch, Chip, Dialog, DialogActions, DialogContent } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -34,6 +34,8 @@ export default function SingleDepartmentSchema() {
     open: false,
     type: "add",
   });
+  const [deleteDrawer, setDeleteDrawer] = React.useState(false)
+  const [deleteScheData, setDeleteScheData] = React.useState({})
   var userData = JSON.parse(localStorage.getItem("User"))
 
   const [openAlert, setOpenAlert] = React.useState({
@@ -74,9 +76,12 @@ export default function SingleDepartmentSchema() {
           type: "success",
         });
         getDepartmentList();
+        setDeleteDrawer(false)
       })
       .catch((err) => {
         setOpenAlert({ open: true, mssg: "error", type: "error" });
+        setDeleteDrawer(false)
+
       });
   }
   const Action = ({ row }) => {
@@ -90,7 +95,11 @@ export default function SingleDepartmentSchema() {
         </div>
       {userData.role == "DistrictManager"?"":  <div
           style={{ color: "darkred", cursor: "pointer", marginLeft: "5px" }}
-          onClick={() => deleteSingleDepartmant(row.row)}
+          onClick={() =>
+            {
+              setDeleteDrawer(true)
+              setDeleteScheData(row.row) 
+            }}
         >
           <DeleteIcon />
         </div>}
@@ -199,6 +208,21 @@ export default function SingleDepartmentSchema() {
       />
 
       <AlertMssg action={openAlert} setAction={setOpenAlert} />
+      <Dialog  open={deleteDrawer} onClose={()=>setDeleteDrawer(false)}>
+      <DialogContent>
+          Are you sure you want to delete it
+      
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={()=>{
+          deleteSingleDepartmant(deleteScheData)
+
+
+        }}>Delete</Button>
+      </DialogActions>
+      
+   </Dialog>
+   
     </div>
   );
 }

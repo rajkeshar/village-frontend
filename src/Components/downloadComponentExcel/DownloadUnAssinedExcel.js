@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { useDispatch } from 'react-redux';
-import { listOfAssignUserDeptVillage,excelDownloadAssignCombination } from '../../Services/Apis/Api';
+import { listOfAssignUserDeptVillage,excelDownloadOfNonAssignCombination } from '../../Services/Apis/Api';
 import { Button } from '@mui/material';
 import { dispatch } from 'd3';
 function ExcelExportButton({ data }) {
@@ -18,8 +18,7 @@ function ExcelExportButton({ data }) {
       { header: 'villageUniqueId', key: 'villageUniqueId' },
       { header: 'deptId', key: 'deptId' },
       { header: 'deptName', key: 'deptName' },
-      { header: 'userName', key: 'userName' },
-      { header: 'userEmail', key: 'userEmail' },
+
     ];
 
     worksheet.columns = columns;
@@ -27,12 +26,9 @@ function ExcelExportButton({ data }) {
     // Add data to the worksheet
     data.forEach((row) => {
       worksheet.addRow({
-        _id: row._id,
-        districtName: row.districtName,
+        _id: row.deptId,
         villageName: row.villageName,
         villageUniqueId: row.villageId,
-        userName: row.userName,
-        userEmail: row.userEmail,
         deptId: row.deptId,
         deptName: row.deptName,
       });
@@ -43,22 +39,22 @@ function ExcelExportButton({ data }) {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
       // Save the blob as a file using file-saver
-      saveAs(blob, 'assignedVillageAndDeptCombinationList.xlsx');
+      saveAs(blob, 'unassignedVillageAndDeptCombinationList.xlsx');
     });
   };
 
   return (
-    <Button onClick={exportToExcel}>Download Assigned Combination</Button>
+    <Button onClick={exportToExcel}>Download  Unassigned  Combination</Button>
   );
 }
 
-export default function DownloadExcel() {
+export default function DownloadUnAssignedExcel() {
   let dispatch = useDispatch()
   let [data, setData] = useState([])
   useEffect(()=>{
-    dispatch(excelDownloadAssignCombination()).then((res)=>{
-      console.log(res.payload.combination,"hii")
-      setData(res.payload.combination)
+    dispatch(excelDownloadOfNonAssignCombination()).then((res)=>{
+      console.log(res.payload.remainingCombination,"hii")
+      setData(res.payload.remainingCombination)
     })
   },[])
   

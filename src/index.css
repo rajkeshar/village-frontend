@@ -12,3 +12,8 @@
 {
     z-index: 0!important;
 }
+
+.p-treeselect-panel
+{
+    z-index: 1000000!important;
+}
